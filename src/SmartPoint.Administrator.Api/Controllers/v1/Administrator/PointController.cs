@@ -28,10 +28,21 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         }
 
         [HttpGet]
-        [Route("get-by-id/{id:Guid}")]
-        public async Task<IActionResult> GetPointByIdAsync(Guid id)
+        [Route("get-by-userid/{userId:Guid}")]
+        public async Task<IActionResult> GetPointByIdAsync(Guid userId)
         {
-            var point = await _pointApplicationService.GetPointByIdAsync(id);
+            var point = await _pointApplicationService.GetPointByIdAsync(userId);
+
+            if (point == null) return BadRequest();
+
+            return Ok(point);
+        }
+
+        [HttpGet]
+        [Route("get-by-userid/{userId:Guid}/date-start/{dateStart}/date-end/{dateEnd}")]
+        public async Task<IActionResult> GetRegistrationHistoryByUserIdAsync(Guid userId, DateOnly dateStart, DateOnly dateEnd, [FromQuery] TimeOnly? timeStart = null, [FromQuery] TimeOnly? timeEnd = null)
+        {
+            var point = await _pointApplicationService.GetRegistrationHistoryByUserIdAsync(userId, dateStart, dateEnd, timeStart, timeEnd);
 
             if (point == null) return BadRequest();
 
@@ -47,7 +58,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         }
 
         [HttpPut]
-        [Route("id/{id:Guid}")]
+        [Route("{id:Guid}")]
         public async Task<IActionResult> UpdatePointAsync(Guid id, UpdatePointRequest request)
         {
             if (!id.Equals(request.Id)) return BadRequest();
@@ -58,7 +69,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         }
 
         [HttpDelete]
-        [Route("id/{id:Guid}")]
+        [Route("{id:Guid}")]
         public async Task<IActionResult> RemovePointAsync(Guid id)
         {
             await _pointApplicationService.DeleteAsync(id);

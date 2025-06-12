@@ -18,6 +18,22 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
 
         public async Task<Point?> GetPointByIdAsync(Guid id) => await _context.Points.FirstOrDefaultAsync(p => p.Id == id);
 
+        public async Task<IEnumerable<Point>?> GetRegistrationHistoryByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd, TimeOnly? timeStart, TimeOnly? timeEnd)
+        {
+            var timeS = timeStart == null ? TimeOnly.MinValue : timeStart;
+            var timeE = timeEnd == null ? TimeOnly.MaxValue : timeEnd;
+
+            return await _context.Points.Where(p => p.UserId == id &&
+                                                    p.RegisterDate >= dateStart &&
+                                                    p.RegisterDate <= dateEnd &&
+                                                    p.RegisterHours >= timeS &&
+                                                    p.RegisterHours <= timeE
+                                              )
+                                              .AsNoTracking()
+                                              .OrderByDescending(o => o.RegisterHours)
+                                              .ToListAsync();
+        }
+
         public async Task CreateAsync(Point point)
         {
             await _context.Points.AddAsync(point);

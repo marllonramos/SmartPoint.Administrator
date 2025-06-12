@@ -6,6 +6,7 @@ namespace SmartPoint.Administrator.Domain.Administrator.Repository
     {
         Task<IEnumerable<Point>> GetPointsAsync();
         Task<Point?> GetPointByIdAsync(Guid id);
+        Task<IEnumerable<Point>?> GetRegistrationHistoryByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd, TimeOnly? timeStart, TimeOnly? timeEnd);
         Task CreateAsync(Point point);
         Task UpdateAsync();
         Task DeleteAsync(Guid id);

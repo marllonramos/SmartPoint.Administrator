@@ -19,6 +19,9 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
 
         public async Task<Point?> GetPointByIdAsync(Guid id) => await _pointRepository.GetPointByIdAsync(id);
 
+        public async Task<IEnumerable<Point>?> GetRegistrationHistoryByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd, TimeOnly? timeStart, TimeOnly? timeEnd) 
+            => await _pointRepository.GetRegistrationHistoryByUserIdAsync(id, dateStart, dateEnd, timeStart, timeEnd);
+
         public async Task CreateAsync(CreatePointRequest request)
         {
             var point = new PointBuilder()
@@ -45,13 +48,13 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
             if (point == null) throw new Exception("Point not found");
 
             point.Update(
-                request.Type, 
-                request.Obs, 
-                request.RegisterDate, 
+                request.Type,
+                request.Obs,
+                request.RegisterDate,
                 request.RegisterHours,
                 request.IsOvertime,
-                request.ReasonOvertime, 
-                request.IsManual, 
+                request.ReasonOvertime,
+                request.IsManual,
                 request.ReasonManual
             );
 
