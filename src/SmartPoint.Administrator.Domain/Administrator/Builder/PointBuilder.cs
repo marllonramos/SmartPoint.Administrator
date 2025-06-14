@@ -23,6 +23,16 @@ namespace SmartPoint.Administrator.Domain.Administrator.Builder
         public PointBuilder WithUserId(Guid userId) { UserId = userId; return this; }
         public PointBuilder WithCompanyId(Guid companyId) { CompanyId = companyId; return this; }
         public PointBuilder WithType(int type) { Type = (PointType)type; return this; }
+        public PointBuilder WithRegisterDate(DateOnly? registerDate)
+        {
+            RegisterDate = registerDate;
+            return this;
+        }
+        public PointBuilder WithRegisterHours(TimeOnly? registerHours)
+        {
+            RegisterHours = registerHours;
+            return this;
+        }
         public PointBuilder WithObs(string? obs) { Obs = obs; return this; }
         public PointBuilder WithLatitude(double? latitude) { Latitude = latitude; return this; }
         public PointBuilder WithLongitude(double? longitude) { Longitude = longitude; return this; }
@@ -33,6 +43,12 @@ namespace SmartPoint.Administrator.Domain.Administrator.Builder
         public PointBuilder WithManual(bool isManual) { IsManual = isManual; return this; }
         public PointBuilder WithReasonManual(string? reasonManual) { ReasonManual = reasonManual; return this; }
 
-        public Point Build() => new Point(UserId, CompanyId, Type, Obs, Latitude, Longitude, Location, IsOvertime, ReasonOvertime, UrlPicture, IsManual, ReasonManual);
+        public Point Build()
+        {
+            if (RegisterDate != null && RegisterHours != null)
+                return new Point(UserId, CompanyId, Type, RegisterDate, RegisterHours, Obs, Latitude, Longitude, Location, IsOvertime, ReasonOvertime, UrlPicture, IsManual, ReasonManual);
+
+            return new Point(UserId, CompanyId, Type, null, null, Obs, Latitude, Longitude, Location, IsOvertime, ReasonOvertime, UrlPicture, IsManual, ReasonManual);
+        }
     }
 }

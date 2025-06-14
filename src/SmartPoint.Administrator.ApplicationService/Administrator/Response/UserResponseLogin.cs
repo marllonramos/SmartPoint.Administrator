@@ -2,8 +2,8 @@
 {
     public class UserResponseLogin
     {
-        public string AccessToken { get; set; }
+        public required string AccessToken { get; set; }
         public double ExpiresIn { get; set; }
-        public UserToken UserToken { get; set; }
+        public required UserToken UserToken { get; set; }
     }
 }

@@ -5,14 +5,14 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
 {
     public class Point : Entity
     {
-        internal Point(Guid userId, Guid companyId, PointType type, string? obs, double? latitude, double? longitude, string? location, bool isOvertime, string? reasonOvertime, string? urlPicture, bool isManual, string? reasonManual)
+        internal Point(Guid userId, Guid companyId, PointType type, DateOnly? registerDate, TimeOnly? registerHours, string? obs, double? latitude, double? longitude, string? location, bool isOvertime, string? reasonOvertime, string? urlPicture, bool isManual, string? reasonManual)
         {
             UserId = userId;
             CompanyId = companyId;
             Type = type;
             var date = DateTime.Now;
-            RegisterDate = DateOnly.FromDateTime(date);
-            RegisterHours = TimeOnly.FromDateTime(date);
+            RegisterDate = registerDate ?? DateOnly.FromDateTime(date);
+            RegisterHours = registerHours ?? TimeOnly.FromDateTime(date);
             Obs = obs;
             Latitude = latitude;
             Longitude = longitude;

@@ -38,12 +38,32 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
             return Ok(vacation);
         }
 
+        [HttpGet]
+        [Route("get-by-userid/{userId:Guid}/date-start/{startYear}/date-end/{endYear}")]
+        public async Task<IActionResult> GetVacationByUserIdAsync(Guid userId, int startYear, int endYear)
+        {
+            var vacation = await _vacationApplicationService.GetVacationByUserIdAsync(userId, startYear, endYear);
+
+            if (vacation == null) return BadRequest();
+
+            return Ok(vacation);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateVacationAsync(CreateVacationRequest request)
         {
             await _vacationApplicationService.CreateAsync(request);
 
             return Ok(request);
+        }
+
+        [HttpPut]
+        [Route("cancellation-by-id/{id:Guid}")]
+        public async Task<IActionResult> CancellationVacationAsync(Guid id)
+        {
+            await _vacationApplicationService.CancellateVacationAsync(id);
+
+            return Ok(id);
         }
 
         [HttpPut]

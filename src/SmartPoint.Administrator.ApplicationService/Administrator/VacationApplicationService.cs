@@ -19,17 +19,28 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
 
         public async Task<Vacation?> GetVacationByIdAsync(Guid id) => await _vacationRepository.GetVacationByIdAsync(id);
 
+        public async Task<IEnumerable<Vacation>?> GetVacationByUserIdAsync(Guid userId, int startYear, int endYear) => await _vacationRepository.GetVacationByUserIdAsync(userId, startYear, endYear);
+
         public async Task CreateAsync(CreateVacationRequest request)
         {
             var vacation = new VacationBuilder()
                                 .WithUserId(request.UserId)
                                 .WithCompanyId(request.CompanyId)
-                                .WithStartDate(request.StartDate)
-                                .WithEndDate(request.EndDate)
+                                .WithStartDate(request.StartPeriod)
+                                .WithEndDate(request.EndPeriod)
                                 .WithObs(request.Obs)
                                 .Build();
 
             await _vacationRepository.CreateAsync(vacation);
+        }
+
+        public async Task CancellateVacationAsync(Guid id)
+        {
+            var vacation = await GetVacationByIdAsync(id);
+
+            vacation?.Cancel();
+
+            await _vacationRepository.CancellateVacationAsync();
         }
 
         public async Task UpdateAsync(UpdateVacationRequest request)
@@ -38,7 +49,7 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
 
             if (vacation == null) throw new Exception("Vacation not found.");
 
-            vacation.Update(request.StartDate, request.EndDate, request.Obs, request.Status);
+            vacation.Update(request.StartPeriod, request.EndPeriod, request.Obs, request.Status);
 
             await _vacationRepository.UpdateAsync();
         }

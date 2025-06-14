@@ -7,6 +7,8 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator.Interfaces
     {
         Task<IEnumerable<Vacation>> GetVacationsAsync();
         Task<Vacation?> GetVacationByIdAsync(Guid id);
+        Task<IEnumerable<Vacation>?> GetVacationByUserIdAsync(Guid userId, int startYear, int endYear);
+        Task CancellateVacationAsync(Guid id);
         Task CreateAsync(CreateVacationRequest request);
         Task UpdateAsync(UpdateVacationRequest request);
         Task DeleteAsync(Guid id);

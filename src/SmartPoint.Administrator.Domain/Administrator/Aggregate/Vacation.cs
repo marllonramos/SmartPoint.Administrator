@@ -5,14 +5,18 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
 {
     public class Vacation : Entity
     {
-        internal Vacation(Guid userId, Guid companyId, DateTime startDate, DateTime endDate, string? obs)
+        internal Vacation(Guid userId, Guid companyId, DateOnly startPeriod, DateOnly endPeriod, string? obs)
         {
             UserId = userId;
             CompanyId = companyId;
-            StartDate = startDate;
-            EndDate = endDate;
+            StartPeriod = startPeriod;
+            EndPeriod = endPeriod;
             Obs = obs;
             Status = VacationStatus.Requested;
+            createdat = DateTime.UtcNow;
+            modifiedat = null;
+            startyear = StartPeriod.Year;
+            endyear = EndPeriod.Year;
         }
 
         // EF Core
@@ -20,17 +24,42 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
 
         public Guid UserId { get; private set; }
         public Guid CompanyId { get; private set; }
-        public DateTime StartDate { get; private set; }
-        public DateTime EndDate { get; private set; }
+        public DateOnly StartPeriod { get; private set; }
+        public DateOnly EndPeriod { get; private set; }
         public string? Obs { get; private set; }
         public VacationStatus Status { get; private set; }
+        public DateTime createdat { get; private set; }
+        public DateTime? modifiedat { get; private set; }
+        public int startyear { get; private set; }
+        public int endyear { get; private set; }
 
-        public void Update(DateTime startDate, DateTime endDate, string? obs, int status)
+        public void Update(DateOnly startDate, DateOnly endDate, string? obs, int status)
         {
-            StartDate = startDate;
-            EndDate = endDate;
+            StartPeriod = startDate;
+            EndPeriod = endDate;
             Obs = obs;
             Status = (VacationStatus)status;
+            modifiedat = DateTime.UtcNow;
+            startyear = StartPeriod.Year;
+            endyear = EndPeriod.Year;
+        }
+
+        public void Approve()
+        {
+            modifiedat = DateTime.UtcNow;
+            Status = VacationStatus.Approved;
+        }
+
+        public void Reject()
+        {
+            modifiedat = DateTime.UtcNow;
+            Status = VacationStatus.Rejected;
+        }
+
+        public void Cancel()
+        {
+            modifiedat = DateTime.UtcNow;
+            Status = VacationStatus.Cancelled;
         }
     }
 }

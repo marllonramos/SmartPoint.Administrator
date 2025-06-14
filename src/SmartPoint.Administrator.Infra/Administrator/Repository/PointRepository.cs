@@ -34,6 +34,18 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
                                               .ToListAsync();
         }
 
+        public async Task<IEnumerable<Point>?> GetWeekPointByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd)
+        {
+            return await _context.Points.Where(p => p.UserId == id &&
+                                                    p.RegisterDate >= dateStart &&
+                                                    p.RegisterDate <= dateEnd
+                                              )
+                                              .AsNoTracking()
+                                              .OrderByDescending(o => o.RegisterDate)
+                                              .ThenByDescending(o => o.RegisterHours)
+                                              .ToListAsync();
+        }
+
         public async Task CreateAsync(Point point)
         {
             await _context.Points.AddAsync(point);

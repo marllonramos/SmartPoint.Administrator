@@ -49,6 +49,17 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
             return Ok(point);
         }
 
+        [HttpGet]
+        [Route("get-week-point-by-userid/{userId:Guid}")]
+        public async Task<IActionResult> GetWeekPointByUserIdAsync(Guid userId)
+        {
+            var point = await _pointApplicationService.GetWeekPointByUserIdAsync(userId);
+
+            if (point == null) return BadRequest();
+
+            return Ok(point);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreatePointAsync(CreatePointRequest request)
         {

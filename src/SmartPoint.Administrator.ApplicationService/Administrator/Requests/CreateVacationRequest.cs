@@ -4,8 +4,8 @@
     {
         public Guid UserId { get; set; }
         public Guid CompanyId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateOnly StartPeriod { get; set; }
+        public DateOnly EndPeriod { get; set; }
         public string? Obs { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
         // EF Core
         protected Company() { }
 
-        public string Name { get; private set; }
+        public string? Name { get; private set; }
         public bool Active { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime? BlockDate { get; private set; }

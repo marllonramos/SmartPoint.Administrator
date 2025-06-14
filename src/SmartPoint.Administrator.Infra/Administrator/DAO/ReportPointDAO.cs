@@ -40,7 +40,7 @@ namespace SmartPoint.Administrator.Infra.Administrator.DAO
                             .Select(pc => new ReportPointAdmDTO
                             {
                                 Point = pc.point,
-                                CompanyName = pc.company.Name,
+                                CompanyName = pc?.company?.Name!,
                                 UserName = user.UserName!
                             })
                             .ToList();

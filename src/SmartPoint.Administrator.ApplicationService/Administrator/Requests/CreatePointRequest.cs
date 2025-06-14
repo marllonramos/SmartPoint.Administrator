@@ -5,6 +5,8 @@
         public Guid UserId { get; set; }
         public Guid CompanyId { get; set; }
         public int Type { get; set; }
+        public DateOnly? RegisterDate { get; set; }
+        public TimeOnly? RegisterHours { get; set; }
         public string? Obs { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }

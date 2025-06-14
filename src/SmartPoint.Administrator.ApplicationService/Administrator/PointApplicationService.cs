@@ -19,7 +19,7 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
 
         public async Task<Point?> GetPointByIdAsync(Guid id) => await _pointRepository.GetPointByIdAsync(id);
 
-        public async Task<IEnumerable<Point>?> GetRegistrationHistoryByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd, TimeOnly? timeStart, TimeOnly? timeEnd) 
+        public async Task<IEnumerable<Point>?> GetRegistrationHistoryByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd, TimeOnly? timeStart, TimeOnly? timeEnd)
             => await _pointRepository.GetRegistrationHistoryByUserIdAsync(id, dateStart, dateEnd, timeStart, timeEnd);
 
         public async Task CreateAsync(CreatePointRequest request)
@@ -28,6 +28,8 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
                             .WithUserId(request.UserId)
                             .WithCompanyId(request.CompanyId)
                             .WithType(request.Type)
+                            .WithRegisterDate(request.RegisterDate)
+                            .WithRegisterHours(request.RegisterHours)
                             .WithObs(request.Obs)
                             .WithLatitude(request.Latitude)
                             .WithLongitude(request.Longitude)
@@ -36,9 +38,32 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
                             .WithReasonOvertime(request.ReasonOvertime)
                             .WithUrlPicture(request.UrlPicture)
                             .WithManual(request.IsManual)
+                            .WithReasonManual(request.ReasonManual)
                             .Build();
 
             await _pointRepository.CreateAsync(point);
+        }
+
+        public async Task<IEnumerable<Point>?> GetWeekPointByUserIdAsync(Guid id)
+        {
+            var startDate = DateOnly.FromDateTime(GetStartOfWeek());
+
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
+            var result = await _pointRepository.GetWeekPointByUserIdAsync(id, startDate, today);
+
+            return result;
+        }
+
+        private DateTime GetStartOfWeek()
+        {
+            var date = DateTime.Now;
+
+            int diff = date.DayOfWeek - DayOfWeek.Monday;
+
+            if (diff < 0) diff += 7;
+
+            return date.AddDays(-1 * diff).Date;
         }
 
         public async Task UpdateAsync(UpdatePointRequest request)

@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SmartPoint.Administrator.Api.Extensions;
@@ -27,6 +28,14 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Identity
             _userManager = userManager;
             _signInManager = signInManager;
             _appSettings = appSettings.Value;
+        }
+
+        [HttpGet]
+        [Route("get-users")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            return Ok(users);
         }
 
         [HttpPost]
@@ -73,11 +82,11 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Identity
         private async Task<UserResponseLogin> GerarJwt(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            var claims = await _userManager.GetClaimsAsync(user);
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var claims = await _userManager.GetClaimsAsync(user!);
+            var userRoles = await _userManager.GetRolesAsync(user!);
 
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user!.Id));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email!));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTime.UtcNow.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64));
@@ -91,7 +100,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Identity
             identityClaims.AddClaims(claims);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_appSettings!.Secret!);
 
             var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
             {
@@ -111,7 +120,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Identity
                 UserToken = new UserToken
                 {
                     Id = user.Id,
-                    Email = user.Email,
+                    Email = user.Email!,
                     Claims = claims.Select(c => new UserClaim
                     {
                         Type = c.Type,
