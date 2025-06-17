@@ -9,10 +9,12 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
     public class PointApplicationService : IPointApplicationService
     {
         private readonly IPointRepository _pointRepository;
+        private readonly IReportPointDAO _reportPointDAO;
 
-        public PointApplicationService(IPointRepository pointRepository)
+        public PointApplicationService(IPointRepository pointRepository, IReportPointDAO reportPointDAO)
         {
             _pointRepository = pointRepository;
+            _reportPointDAO = reportPointDAO;
         }
 
         public async Task<IEnumerable<Point>> GetPointsAsync() => await _pointRepository.GetPointsAsync();
@@ -21,6 +23,8 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
 
         public async Task<IEnumerable<Point>?> GetRegistrationHistoryByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd, TimeOnly? timeStart, TimeOnly? timeEnd)
             => await _pointRepository.GetRegistrationHistoryByUserIdAsync(id, dateStart, dateEnd, timeStart, timeEnd);
+
+        public async Task<IEnumerable<dynamic>?> GetReportRegistrationAsync(DateOnly dateStart, DateOnly dateEnd, Guid? id) => await _reportPointDAO.GetReportRegistrationAsync(dateStart, dateEnd, id);
 
         public async Task CreateAsync(CreatePointRequest request)
         {

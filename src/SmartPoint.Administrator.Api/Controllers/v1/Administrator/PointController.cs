@@ -50,6 +50,17 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         }
 
         [HttpGet]
+        [Route("get-by-report-admin/date-start/{dateStart}/date-end/{dateEnd}")]
+        public async Task<IActionResult> GetReportRegistrationAsync(DateOnly dateStart, DateOnly dateEnd, [FromQuery] Guid? userId = null)
+        {
+            var point = await _pointApplicationService.GetReportRegistrationAsync(dateStart, dateEnd, userId);
+
+            if (point == null) return BadRequest();
+
+            return Ok(point);
+        }
+
+        [HttpGet]
         [Route("get-week-point-by-userid/{userId:Guid}")]
         public async Task<IActionResult> GetWeekPointByUserIdAsync(Guid userId)
         {

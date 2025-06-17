@@ -49,6 +49,17 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
             return Ok(vacation);
         }
 
+        [HttpGet]
+        [Route("get-vacations-management/start-year/{startYear}/end-year/{endYear}")]
+        public async Task<IActionResult> GetVacationsManagementAsync(int startYear, int endYear, [FromQuery] Guid? userId)
+        {
+            var vacations = await _vacationApplicationService.GetVacationsManagementAsync(startYear, endYear, userId);
+
+            if (vacations == null) return BadRequest();
+
+            return Ok(vacations);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateVacationAsync(CreateVacationRequest request)
         {

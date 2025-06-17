@@ -2,16 +2,19 @@
 using SmartPoint.Administrator.Domain.Administrator.Aggregate;
 using SmartPoint.Administrator.Domain.Administrator.Repository;
 using SmartPoint.Administrator.Infra.Administrator.Context;
+using SmartPoint.Administrator.Infra.Identity.Context;
 
 namespace SmartPoint.Administrator.Infra.Administrator.Repository
 {
     public class PointRepository : IPointRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly ApplicationIdentityDbContext _identityContext;
 
-        public PointRepository(ApplicationDbContext context)
+        public PointRepository(ApplicationDbContext context, ApplicationIdentityDbContext identityContext)
         {
             _context = context;
+            _identityContext = identityContext;
         }
 
         public async Task<IEnumerable<Point>> GetPointsAsync() => await _context.Points.ToListAsync();

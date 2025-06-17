@@ -17,6 +17,7 @@ namespace SmartPoint.Administrator.Api.Configuration
 
             // DAO
             services.AddScoped<IReportPointDAO, ReportPointDAO>();
+            services.AddScoped<IVacationManagementDAO, VacationManagementDAO>();
 
             // Service
             services.AddScoped<ICompanyApplicationService, CompanyApplicationService>();
