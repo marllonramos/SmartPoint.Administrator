@@ -1,5 +1,7 @@
 ﻿using SmartPoint.Administrator.ApplicationService.Administrator;
 using SmartPoint.Administrator.ApplicationService.Administrator.Interfaces;
+using SmartPoint.Administrator.ApplicationService.Shared.Interfaces;
+using SmartPoint.Administrator.ApplicationService.Shared.Notifications;
 using SmartPoint.Administrator.Domain.Administrator.Repository;
 using SmartPoint.Administrator.Infra.Administrator.DAO;
 using SmartPoint.Administrator.Infra.Administrator.Repository;
@@ -10,6 +12,9 @@ namespace SmartPoint.Administrator.Api.Configuration
     {
         public static void AddDependencyInjection(this IServiceCollection services)
         {
+            // Notificator
+            services.AddScoped<INotificator, Notificator>();
+
             // Infra
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IPointRepository, PointRepository>();

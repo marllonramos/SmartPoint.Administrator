@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SmartPoint.Administrator.Api.Configuration;
+using SmartPoint.Administrator.Api.Configuration.Middlewares;
 using SmartPoint.Administrator.Api.Extensions;
 using System.Text;
 
@@ -10,7 +11,7 @@ namespace SmartPoint.Administrator.Api
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateBuilder(args).UseLogging();
 
             builder.Services.AddControllers();
 
@@ -46,6 +47,8 @@ namespace SmartPoint.Administrator.Api
 
             builder.Services.AddSwaggerFormat(builder);
 
+            builder.Services.AddLogging(builder.Configuration);
+
             builder.Services.AddDependencyInjection();
 
             var app = builder.Build();
@@ -59,6 +62,8 @@ namespace SmartPoint.Administrator.Api
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true)
                 .AllowCredentials());
+
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
             app.UseAuthentication();
             app.UseAuthorization();
