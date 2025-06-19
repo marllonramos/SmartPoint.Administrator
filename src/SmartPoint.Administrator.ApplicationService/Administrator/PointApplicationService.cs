@@ -1,30 +1,100 @@
 ﻿using SmartPoint.Administrator.ApplicationService.Administrator.Interfaces;
 using SmartPoint.Administrator.ApplicationService.Administrator.Requests;
+using SmartPoint.Administrator.ApplicationService.Shared.Interfaces;
+using SmartPoint.Administrator.ApplicationService.Shared.Notifications;
 using SmartPoint.Administrator.Domain.Administrator.Aggregate;
 using SmartPoint.Administrator.Domain.Administrator.Builder;
 using SmartPoint.Administrator.Domain.Administrator.Repository;
+using System.Net;
 
 namespace SmartPoint.Administrator.ApplicationService.Administrator
 {
     public class PointApplicationService : IPointApplicationService
     {
+        private readonly INotificator _notificator;
         private readonly IPointRepository _pointRepository;
         private readonly IReportPointDAO _reportPointDAO;
 
-        public PointApplicationService(IPointRepository pointRepository, IReportPointDAO reportPointDAO)
+        public PointApplicationService(INotificator notificator, IPointRepository pointRepository, IReportPointDAO reportPointDAO)
         {
+            _notificator = notificator;
             _pointRepository = pointRepository;
             _reportPointDAO = reportPointDAO;
         }
 
-        public async Task<IEnumerable<Point>> GetPointsAsync() => await _pointRepository.GetPointsAsync();
+        public async Task<IEnumerable<Point>?> GetPointsAsync()
+        {
+            var points = await _pointRepository.GetPointsAsync();
 
-        public async Task<Point?> GetPointByIdAsync(Guid id) => await _pointRepository.GetPointByIdAsync(id);
+            if (points == null || points.Count() == 0)
+            {
+                _notificator.Handle(new Notification("Pontos não encontrados.", HttpStatusCode.NotFound));
+
+                return default;
+            }
+
+            return points;
+        }
+
+        public async Task<Point?> GetPointByIdAsync(Guid id)
+        {
+            var point = await _pointRepository.GetPointByIdAsync(id);
+
+            if (point == null)
+            {
+                _notificator.Handle(new Notification("Ponto não encontrado.", HttpStatusCode.NotFound));
+
+                return default;
+            }
+
+            return point;
+        }
 
         public async Task<IEnumerable<Point>?> GetRegistrationHistoryByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd, TimeOnly? timeStart, TimeOnly? timeEnd)
-            => await _pointRepository.GetRegistrationHistoryByUserIdAsync(id, dateStart, dateEnd, timeStart, timeEnd);
+        {
+            var points = await _pointRepository.GetRegistrationHistoryByUserIdAsync(id, dateStart, dateEnd, timeStart, timeEnd);
 
-        public async Task<IEnumerable<dynamic>?> GetReportRegistrationAsync(DateOnly dateStart, DateOnly dateEnd, Guid? id) => await _reportPointDAO.GetReportRegistrationAsync(dateStart, dateEnd, id);
+            if (points == null || points.Count() == 0)
+            {
+                _notificator.Handle(new Notification("Pontos não encontrados.", HttpStatusCode.NotFound));
+
+                return default;
+            }
+
+            return points;
+        }
+
+        public async Task<IEnumerable<dynamic>?> GetReportRegistrationAsync(DateOnly dateStart, DateOnly dateEnd, Guid? id)
+        {
+            var points = await _reportPointDAO.GetReportRegistrationAsync(dateStart, dateEnd, id);
+
+            if (points == null || points.Count() == 0)
+            {
+                _notificator.Handle(new Notification("Pontos não encontrados.", HttpStatusCode.NotFound));
+
+                return default;
+            }
+
+            return points;
+        }
+
+        public async Task<IEnumerable<Point>?> GetWeekPointsByUserIdAsync(Guid id)
+        {
+            var startDate = DateOnly.FromDateTime(GetStartOfWeek());
+
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
+            var points = await _pointRepository.GetWeekPointsByUserIdAsync(id, startDate, today);
+
+            if (points == null || points.Count() == 0)
+            {
+                _notificator.Handle(new Notification("Pontos não encontrados.", HttpStatusCode.NotFound));
+
+                return default;
+            }
+
+            return points;
+        }
 
         public async Task CreateAsync(CreatePointRequest request)
         {
@@ -48,33 +118,11 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
             await _pointRepository.CreateAsync(point);
         }
 
-        public async Task<IEnumerable<Point>?> GetWeekPointByUserIdAsync(Guid id)
-        {
-            var startDate = DateOnly.FromDateTime(GetStartOfWeek());
-
-            var today = DateOnly.FromDateTime(DateTime.Now);
-
-            var result = await _pointRepository.GetWeekPointByUserIdAsync(id, startDate, today);
-
-            return result;
-        }
-
-        private DateTime GetStartOfWeek()
-        {
-            var date = DateTime.Now;
-
-            int diff = date.DayOfWeek - DayOfWeek.Monday;
-
-            if (diff < 0) diff += 7;
-
-            return date.AddDays(-1 * diff).Date;
-        }
-
         public async Task UpdateAsync(UpdatePointRequest request)
         {
             var point = await GetPointByIdAsync(request.Id);
 
-            if (point == null) throw new Exception("Point not found");
+            if (point == null) return;
 
             point.Update(
                 request.Type,
@@ -90,6 +138,24 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
             await _pointRepository.UpdateAsync();
         }
 
-        public async Task DeleteAsync(Guid id) => await _pointRepository.DeleteAsync(id);
+        public async Task DeleteAsync(Guid id)
+        {
+            var point = await GetPointByIdAsync(id);
+
+            if (point == null) return;
+
+            await _pointRepository.DeleteAsync(point);
+        }
+
+        private DateTime GetStartOfWeek()
+        {
+            var date = DateTime.Now;
+
+            int diff = date.DayOfWeek - DayOfWeek.Monday;
+
+            if (diff < 0) diff += 7;
+
+            return date.AddDays(-1 * diff).Date;
+        }
     }
 }

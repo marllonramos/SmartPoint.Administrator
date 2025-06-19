@@ -17,7 +17,7 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
             _identityContext = identityContext;
         }
 
-        public async Task<IEnumerable<Point>> GetPointsAsync() => await _context.Points.ToListAsync();
+        public async Task<IEnumerable<Point>> GetPointsAsync() => await _context.Points.AsNoTracking().ToListAsync();
 
         public async Task<Point?> GetPointByIdAsync(Guid id) => await _context.Points.FirstOrDefaultAsync(p => p.Id == id);
 
@@ -37,7 +37,7 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
                                               .ToListAsync();
         }
 
-        public async Task<IEnumerable<Point>?> GetWeekPointByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd)
+        public async Task<IEnumerable<Point>?> GetWeekPointsByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd)
         {
             return await _context.Points.Where(p => p.UserId == id &&
                                                     p.RegisterDate >= dateStart &&
@@ -57,10 +57,8 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
 
         public async Task UpdateAsync() => await _context.SaveChangesAsync();
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Point point)
         {
-            var point = await GetPointByIdAsync(id);
-
             if (point != null)
             {
                 _context.Points.Remove(point);

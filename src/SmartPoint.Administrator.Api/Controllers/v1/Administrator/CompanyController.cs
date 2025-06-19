@@ -22,6 +22,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         }
 
         [HttpGet]
+        [Route("all")]
         public async Task<IActionResult> GetAllCompaniesAsync()
         {
             var companies = await _companyApplicationService.GetCompaniesAsync();
@@ -44,6 +45,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
             if (!ModelState.IsValid)
             {
                 NotifyError(ModelState.Values);
+
                 return CustomResponse();
             }
 
@@ -59,6 +61,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
             if (!ModelState.IsValid)
             {
                 NotifyError(ModelState.Values);
+
                 return CustomResponse();
             }
 

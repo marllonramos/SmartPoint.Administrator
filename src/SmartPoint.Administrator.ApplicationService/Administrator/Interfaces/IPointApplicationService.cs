@@ -5,11 +5,11 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator.Interfaces
 {
     public interface IPointApplicationService
     {
-        Task<IEnumerable<Point>> GetPointsAsync();
+        Task<IEnumerable<Point>?> GetPointsAsync();
         Task<Point?> GetPointByIdAsync(Guid id);
         Task<IEnumerable<Point>?> GetRegistrationHistoryByUserIdAsync(Guid id, DateOnly dateStart, DateOnly dateEnd, TimeOnly? timeStart, TimeOnly? timeEnd);
         Task<IEnumerable<dynamic>?> GetReportRegistrationAsync(DateOnly dateStart, DateOnly dateEnd, Guid? id);
-        Task<IEnumerable<Point>?> GetWeekPointByUserIdAsync(Guid id);
+        Task<IEnumerable<Point>?> GetWeekPointsByUserIdAsync(Guid id);
         Task CreateAsync(CreatePointRequest request);
         Task UpdateAsync(UpdatePointRequest request);
         Task DeleteAsync(Guid id);
