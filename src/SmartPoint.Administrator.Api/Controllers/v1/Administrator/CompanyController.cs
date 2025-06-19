@@ -1,18 +1,22 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using SmartPoint.Administrator.Api.Shared;
 using SmartPoint.Administrator.ApplicationService.Administrator.Interfaces;
 using SmartPoint.Administrator.ApplicationService.Administrator.Requests;
+using SmartPoint.Administrator.ApplicationService.Shared.Interfaces;
+using System.Net;
 
 namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
 {
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/company")]
-    public class CompanyController : ControllerBase
+    public class CompanyController : MainController
     {
         private readonly ICompanyApplicationService _companyApplicationService;
 
-        public CompanyController(ICompanyApplicationService companyApplicationService)
+        public CompanyController(INotificator notificator, ICompanyApplicationService companyApplicationService)
+            : base(notificator)
         {
             _companyApplicationService = companyApplicationService;
         }
@@ -22,39 +26,47 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         {
             var companies = await _companyApplicationService.GetCompaniesAsync();
 
-            if (companies == null) return BadRequest();
-
-            return Ok(companies);
+            return CustomResponse(HttpStatusCode.OK, companies);
         }
 
         [HttpGet]
-        [Route("get-by-id/{id:Guid}")]
-        public async Task<IActionResult> GetCompanyByIdAsync(Guid id)
+        [Route("get-by-id-only-active/{id:Guid}")]
+        public async Task<IActionResult> GetCompanyByIdOnyActiveAsync(Guid id)
         {
-            var company = await _companyApplicationService.GetCompanyByIdAsync(id);
+            var company = await _companyApplicationService.GetCompanyByIdOnlyActiveAsync(id);
 
-            if (company == null) return BadRequest();
-
-            return Ok(company);
+            return CustomResponse(HttpStatusCode.OK, company);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateVacationAsync(CreateCompanyRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                NotifyError(ModelState.Values);
+                return CustomResponse();
+            }
+
             await _companyApplicationService.CreateAsync(request);
 
-            return Ok(request);
+            return CustomResponse(HttpStatusCode.Created, request);
         }
 
         [HttpPut]
         [Route("id/{id:Guid}")]
         public async Task<IActionResult> UpdateCompanyAsync(Guid id, UpdateCompanyRequest request)
         {
-            if (!id.Equals(request.Id)) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                NotifyError(ModelState.Values);
+                return CustomResponse();
+            }
+
+            if (!id.Equals(request.Id)) return CustomResponse(HttpStatusCode.Conflict, "Identificador da empresa diverge.");
 
             await _companyApplicationService.UpdateAsync(request);
 
-            return Ok(request);
+            return CustomResponse(HttpStatusCode.OK, request);
         }
 
         [HttpDelete]
@@ -63,7 +75,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         {
             await _companyApplicationService.DeleteAsync(id);
 
-            return Ok();
+            return CustomResponse(HttpStatusCode.NoContent);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
     {
         public Company(string name)
         {
-            Name = name;
+            Name = name.Trim();
             Active = true;
             StartDate = DateTime.UtcNow;
             BlockDate = null;
@@ -20,11 +20,11 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
         public DateTime StartDate { get; private set; }
         public DateTime? BlockDate { get; private set; }
 
-        public void Update(string name, bool active, DateTime? blockDate)
+        public void Update(string name, bool active)
         {
-            Name = name;
+            Name = name.Trim();
             Active = active;
-            BlockDate = blockDate;
+            BlockDate = active ? null : DateTime.UtcNow;
         }
     }
 }

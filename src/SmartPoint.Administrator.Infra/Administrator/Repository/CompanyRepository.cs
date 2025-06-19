@@ -14,9 +14,13 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Company>> GetCompaniesAsync() => await _context.Companies.ToListAsync();
+        public async Task<IEnumerable<Company>> GetCompaniesAsync() => await _context.Companies.Where(c => c.Active == true).AsNoTracking().ToListAsync();
 
         public async Task<Company?> GetCompanyByIdAsync(Guid id) => await _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
+
+        public async Task<Company?> GetCompanyByIdOnlyActiveAsync(Guid id) => await _context.Companies.FirstOrDefaultAsync(c => c.Id == id && c.Active == true);
+
+        public async Task<Company?> GetCompanyByNameAsync(string name) => await _context.Companies.Where(c => EF.Functions.ILike(c.Name, name.Trim())).AsNoTracking().FirstOrDefaultAsync();
 
         public async Task CreateAsync(Company company)
         {
@@ -26,10 +30,8 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
 
         public async Task UpdateAsync() => await _context.SaveChangesAsync();
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Company company)
         {
-            var company = await GetCompanyByIdAsync(id);
-
             if (company != null)
             {
                 _context.Companies.Remove(company);

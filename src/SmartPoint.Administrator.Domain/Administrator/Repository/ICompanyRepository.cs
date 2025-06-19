@@ -6,8 +6,10 @@ namespace SmartPoint.Administrator.Domain.Administrator.Repository
     {
         Task<IEnumerable<Company>> GetCompaniesAsync();
         Task<Company?> GetCompanyByIdAsync(Guid id);
+        Task<Company?> GetCompanyByIdOnlyActiveAsync(Guid id);
+        Task<Company?> GetCompanyByNameAsync(string name);
         Task CreateAsync(Company company);
         Task UpdateAsync();
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(Company company);
     }
 }

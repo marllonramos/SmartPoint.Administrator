@@ -3,6 +3,7 @@ using SmartPoint.Administrator.ApplicationService.Administrator.Interfaces;
 using SmartPoint.Administrator.ApplicationService.Shared.Interfaces;
 using SmartPoint.Administrator.ApplicationService.Shared.Notifications;
 using SmartPoint.Administrator.Domain.Administrator.Repository;
+using SmartPoint.Administrator.Domain.Administrator.Service;
 using SmartPoint.Administrator.Infra.Administrator.DAO;
 using SmartPoint.Administrator.Infra.Administrator.Repository;
 
@@ -28,6 +29,9 @@ namespace SmartPoint.Administrator.Api.Configuration
             services.AddScoped<ICompanyApplicationService, CompanyApplicationService>();
             services.AddScoped<IPointApplicationService, PointApplicationService>();
             services.AddScoped<IVacationApplicationService, VacationApplicationService>();
+
+            // DomainService
+            services.AddScoped<ICompanyDomainService, CompanyDomainService>();
         }
     }
 }

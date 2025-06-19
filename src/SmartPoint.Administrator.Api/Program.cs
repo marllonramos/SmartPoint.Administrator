@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SmartPoint.Administrator.Api.Configuration;
 using SmartPoint.Administrator.Api.Configuration.Middlewares;
@@ -14,6 +15,11 @@ namespace SmartPoint.Administrator.Api
             var builder = WebApplication.CreateBuilder(args).UseLogging();
 
             builder.Services.AddControllers();
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             builder.Services.AddDBConfiguration(builder.Configuration);
             builder.Services.AddIdentityConfiguration(builder.Configuration);

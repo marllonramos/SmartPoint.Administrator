@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SmartPoint.Administrator.Domain.Administrator.Exceptions;
 
 namespace SmartPoint.Administrator.Api.Configuration.Middlewares
 {
@@ -16,6 +17,22 @@ namespace SmartPoint.Administrator.Api.Configuration.Middlewares
             try
             {
                 await _next.Invoke(context);
+            }
+            catch (BusinessException bex)
+            {
+                context.Response.StatusCode = 400;
+                context.Response.ContentType = "application/json";
+
+                var errors = new
+                {
+                    success = false,
+                    result = new
+                    {
+                        errors = new[] { $"Regra de negócio violada: {bex.Message}" }
+                    }
+                };
+
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(errors));
             }
             catch (Exception ex)
             {
