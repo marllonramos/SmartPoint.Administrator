@@ -1,18 +1,22 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using SmartPoint.Administrator.Api.Shared;
 using SmartPoint.Administrator.ApplicationService.Administrator.Interfaces;
 using SmartPoint.Administrator.ApplicationService.Administrator.Requests;
+using SmartPoint.Administrator.ApplicationService.Shared.Interfaces;
+using System.Net;
 
 namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
 {
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/vacation")]
-    public class VacationController : ControllerBase
+    public class VacationController : MainController
     {
         private readonly IVacationApplicationService _vacationApplicationService;
 
-        public VacationController(IVacationApplicationService vacationApplicationService)
+        public VacationController(INotificator notificator, IVacationApplicationService vacationApplicationService)
+            : base(notificator)
         {
             _vacationApplicationService = vacationApplicationService;
         }
@@ -22,9 +26,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         {
             var vacations = await _vacationApplicationService.GetVacationsAsync();
 
-            if (vacations == null) return BadRequest();
-
-            return Ok(vacations);
+            return CustomResponse(HttpStatusCode.OK, vacations);
         }
 
         [HttpGet]
@@ -33,20 +35,16 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         {
             var vacation = await _vacationApplicationService.GetVacationByIdAsync(id);
 
-            if (vacation == null) return BadRequest();
-
-            return Ok(vacation);
+            return CustomResponse(HttpStatusCode.OK, vacation);
         }
 
         [HttpGet]
         [Route("get-by-userid/{userId:Guid}/date-start/{startYear}/date-end/{endYear}")]
         public async Task<IActionResult> GetVacationByUserIdAsync(Guid userId, int startYear, int endYear)
         {
-            var vacation = await _vacationApplicationService.GetVacationByUserIdAsync(userId, startYear, endYear);
+            var vacations = await _vacationApplicationService.GetVacationByUserIdAsync(userId, startYear, endYear);
 
-            if (vacation == null) return BadRequest();
-
-            return Ok(vacation);
+            return CustomResponse(HttpStatusCode.OK, vacations);
         }
 
         [HttpGet]
@@ -55,17 +53,22 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         {
             var vacations = await _vacationApplicationService.GetVacationsManagementAsync(startYear, endYear, userId);
 
-            if (vacations == null) return BadRequest();
-
-            return Ok(vacations);
+            return CustomResponse(HttpStatusCode.OK, vacations);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateVacationAsync(CreateVacationRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                NotifyError(ModelState.Values);
+
+                return CustomResponse();
+            }
+
             await _vacationApplicationService.CreateAsync(request);
 
-            return Ok(request);
+            return CustomResponse(HttpStatusCode.OK, request);
         }
 
         [HttpPut]
@@ -74,18 +77,25 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         {
             await _vacationApplicationService.CancellateVacationAsync(id);
 
-            return Ok(id);
+            return CustomResponse(HttpStatusCode.OK, id);
         }
 
         [HttpPut]
         [Route("id/{id:Guid}")]
         public async Task<IActionResult> UpdateVacationAsync(Guid id, UpdateVacationRequest request)
         {
-            if (!id.Equals(request.Id)) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                NotifyError(ModelState.Values);
+
+                return CustomResponse();
+            }
+
+            if (!id.Equals(request.Id)) return CustomResponse(HttpStatusCode.Conflict, "Identificador das férias diverge.");
 
             await _vacationApplicationService.UpdateAsync(request);
 
-            return Ok(request);
+            return CustomResponse(HttpStatusCode.OK, request);
         }
 
         [HttpDelete]
@@ -94,7 +104,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         {
             await _vacationApplicationService.DeleteAsync(id);
 
-            return Ok();
+            return CustomResponse(HttpStatusCode.NoContent);
         }
     }
 }

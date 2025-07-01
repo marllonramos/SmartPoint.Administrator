@@ -20,17 +20,10 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
 
         public async Task<IEnumerable<Vacation>?> GetVacationByUserIdAsync(Guid userId, int startYear, int endYear)
         {
-            try
-            {
-                return await _context.Vacations.Where(v => v.UserId == userId &&
-                                                           v.startyear == startYear ||
-                                                           v.endyear == endYear
-                                                     ).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return await _context.Vacations.Where(v => v.UserId == userId &&
+                                                       v.startyear == startYear ||
+                                                       v.endyear == endYear
+                                                 ).ToListAsync();
         }
 
         public async Task CreateAsync(Vacation vacation)
@@ -43,15 +36,10 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
 
         public async Task UpdateAsync() => await _context.SaveChangesAsync();
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Vacation vacation)
         {
-            var vacation = await GetVacationByIdAsync(id);
-
-            if (vacation != null)
-            {
-                _context.Vacations.Remove(vacation);
-                await _context.SaveChangesAsync();
-            }
+            _context.Vacations.Remove(vacation);
+            await _context.SaveChangesAsync();
         }
     }
 }

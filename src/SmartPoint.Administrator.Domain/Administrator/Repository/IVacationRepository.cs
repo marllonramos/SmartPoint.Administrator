@@ -10,6 +10,6 @@ namespace SmartPoint.Administrator.Domain.Administrator.Repository
         Task CancellateVacationAsync();
         Task CreateAsync(Vacation vacation);
         Task UpdateAsync();
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(Vacation vacation);
     }
 }

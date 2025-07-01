@@ -5,7 +5,7 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator.Interfaces
 {
     public interface IVacationApplicationService
     {
-        Task<IEnumerable<Vacation>> GetVacationsAsync();
+        Task<IEnumerable<Vacation>?> GetVacationsAsync();
         Task<Vacation?> GetVacationByIdAsync(Guid id);
         Task<IEnumerable<Vacation>?> GetVacationByUserIdAsync(Guid userId, int startYear, int endYear);
         Task<IEnumerable<dynamic>?> GetVacationsManagementAsync(int startYear, int endYear, Guid? userId);
