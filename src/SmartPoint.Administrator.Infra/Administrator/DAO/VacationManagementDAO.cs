@@ -20,8 +20,8 @@ namespace SmartPoint.Administrator.Infra.Administrator.DAO
         {
             try
             {
-                var queryVacations = _context.Vacations.Where(v => v.startyear == startYear &&
-                                                                v.endyear == endYear
+                var queryVacations = _context.Vacations.Where(v => v.StartYear == startYear &&
+                                                                v.EndYear == endYear
                                                           );
 
                 if (userId != null) queryVacations = queryVacations.Where(p => p.UserId == userId);

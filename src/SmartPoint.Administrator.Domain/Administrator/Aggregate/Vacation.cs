@@ -13,10 +13,10 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
             EndPeriod = endPeriod;
             Obs = obs;
             Status = VacationStatus.Requested;
-            createdat = DateTime.UtcNow;
-            modifiedat = null;
-            startyear = StartPeriod.Year;
-            endyear = EndPeriod.Year;
+            CreatedAt = DateTime.UtcNow;
+            ModifiedAt = null;
+            StartYear = StartPeriod.Year;
+            EndYear = EndPeriod.Year;
         }
 
         // EF Core
@@ -28,10 +28,10 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
         public DateOnly EndPeriod { get; private set; }
         public string? Obs { get; private set; }
         public VacationStatus Status { get; private set; }
-        public DateTime createdat { get; private set; }
-        public DateTime? modifiedat { get; private set; }
-        public int startyear { get; private set; }
-        public int endyear { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? ModifiedAt { get; private set; }
+        public int StartYear { get; private set; }
+        public int EndYear { get; private set; }
 
         public void Update(DateOnly startDate, DateOnly endDate, string? obs, int status)
         {
@@ -39,26 +39,26 @@ namespace SmartPoint.Administrator.Domain.Administrator.Aggregate
             EndPeriod = endDate;
             Obs = obs;
             Status = (VacationStatus)status;
-            modifiedat = DateTime.UtcNow;
-            startyear = StartPeriod.Year;
-            endyear = EndPeriod.Year;
+            ModifiedAt = DateTime.UtcNow;
+            StartYear = StartPeriod.Year;
+            EndYear = EndPeriod.Year;
         }
 
         public void Approve()
         {
-            modifiedat = DateTime.UtcNow;
+            ModifiedAt = DateTime.UtcNow;
             Status = VacationStatus.Approved;
         }
 
         public void Reject()
         {
-            modifiedat = DateTime.UtcNow;
+            ModifiedAt = DateTime.UtcNow;
             Status = VacationStatus.Rejected;
         }
 
         public void Cancel()
         {
-            modifiedat = DateTime.UtcNow;
+            ModifiedAt = DateTime.UtcNow;
             Status = VacationStatus.Cancelled;
         }
     }

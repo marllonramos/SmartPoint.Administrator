@@ -21,8 +21,8 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
         public async Task<IEnumerable<Vacation>?> GetVacationByUserIdAsync(Guid userId, int startYear, int endYear)
         {
             return await _context.Vacations.Where(v => v.UserId == userId &&
-                                                       v.startyear == startYear ||
-                                                       v.endyear == endYear
+                                                       v.StartYear == startYear ||
+                                                       v.EndYear == endYear
                                                  ).ToListAsync();
         }
 
