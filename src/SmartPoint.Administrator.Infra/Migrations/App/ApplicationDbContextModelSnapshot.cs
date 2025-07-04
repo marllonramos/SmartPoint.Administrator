@@ -61,13 +61,13 @@ namespace SmartPoint.Administrator.Infra.Migrations.App
                     b.Property<bool>("IsOvertime")
                         .HasColumnType("boolean");
 
-                    b.Property<double>("Latitude")
+                    b.Property<double?>("Latitude")
                         .HasColumnType("double precision");
 
                     b.Property<string>("Location")
                         .HasColumnType("text");
 
-                    b.Property<double>("Longitude")
+                    b.Property<double?>("Longitude")
                         .HasColumnType("double precision");
 
                     b.Property<string>("Obs")
@@ -108,14 +108,26 @@ namespace SmartPoint.Administrator.Infra.Migrations.App
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("EndPeriod")
+                        .HasColumnType("date");
+
+                    b.Property<int>("EndYear")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Obs")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("StartPeriod")
+                        .HasColumnType("date");
+
+                    b.Property<int>("StartYear")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");

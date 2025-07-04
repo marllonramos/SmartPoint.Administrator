@@ -23,7 +23,7 @@ namespace SmartPoint.Administrator.Api.Configuration.Middlewares
                 context.Response.StatusCode = 400;
                 context.Response.ContentType = "application/json";
 
-                var errors = new
+                var response = new
                 {
                     success = false,
                     result = new
@@ -32,7 +32,7 @@ namespace SmartPoint.Administrator.Api.Configuration.Middlewares
                     }
                 };
 
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(errors));
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
             }
             catch (Exception ex)
             {
@@ -41,7 +41,7 @@ namespace SmartPoint.Administrator.Api.Configuration.Middlewares
                     context.Response.StatusCode = 500;
                     context.Response.ContentType = "application/json";
 
-                    var errors = new
+                    var response = new
                     {
                         success = false,
                         result = new
@@ -50,7 +50,7 @@ namespace SmartPoint.Administrator.Api.Configuration.Middlewares
                         }
                     };
 
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(errors));
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
                 }
             }
         }

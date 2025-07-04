@@ -21,7 +21,7 @@ namespace SmartPoint.Administrator.Api.Shared
 
         protected ActionResult CustomResponse(HttpStatusCode statusCode = HttpStatusCode.OK, object result = null!)
         {
-            if (ValidOperation())
+            if (IsStatusCode2xx(statusCode) && ValidOperation())
             {
                 return new ObjectResult(new
                 {
@@ -29,7 +29,19 @@ namespace SmartPoint.Administrator.Api.Shared
                     result
                 })
                 {
-                    StatusCode = (int)statusCode,
+                    StatusCode = (int)statusCode
+                };
+            }
+
+            if (!IsStatusCode2xx(statusCode) && result != null)
+            {
+                return new ObjectResult(new
+                {
+                    success = false,
+                    result
+                })
+                {
+                    StatusCode = (int)statusCode
                 };
             }
 
@@ -74,5 +86,13 @@ namespace SmartPoint.Administrator.Api.Shared
                     NotifyError(error.ErrorMessage, statusCode);
             }
         }
+
+        protected void NotifyError(IEnumerable<dynamic> values, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        {
+            foreach (var value in values)
+                NotifyError($"{value.Code} - {value.Description}", statusCode);
+        }
+
+        private bool IsStatusCode2xx(HttpStatusCode statusCode) => ((int)statusCode).ToString().StartsWith('2') ? true : false;
     }
 }

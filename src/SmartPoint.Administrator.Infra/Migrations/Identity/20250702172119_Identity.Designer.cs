@@ -12,7 +12,7 @@ using SmartPoint.Administrator.Infra.Identity.Context;
 namespace SmartPoint.Administrator.Infra.Migrations.Identity
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    [Migration("20250607032719_Identity")]
+    [Migration("20250702172119_Identity")]
     partial class Identity
     {
         /// <inheritdoc />
@@ -179,6 +179,10 @@ namespace SmartPoint.Administrator.Infra.Migrations.Identity
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");

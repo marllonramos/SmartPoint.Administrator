@@ -42,8 +42,8 @@ namespace SmartPoint.Administrator.Infra.Migrations.App
                     RegisterDate = table.Column<DateOnly>(type: "date", nullable: false),
                     RegisterHours = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
                     Obs = table.Column<string>(type: "text", nullable: true),
-                    Latitude = table.Column<double>(type: "double precision", nullable: false),
-                    Longitude = table.Column<double>(type: "double precision", nullable: false),
+                    Latitude = table.Column<double>(type: "double precision", nullable: true),
+                    Longitude = table.Column<double>(type: "double precision", nullable: true),
                     Location = table.Column<string>(type: "text", nullable: true),
                     IsOvertime = table.Column<bool>(type: "boolean", nullable: false),
                     ReasonOvertime = table.Column<string>(type: "text", nullable: true),
@@ -64,10 +64,14 @@ namespace SmartPoint.Administrator.Infra.Migrations.App
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    StartPeriod = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndPeriod = table.Column<DateOnly>(type: "date", nullable: false),
                     Obs = table.Column<string>(type: "text", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    StartYear = table.Column<int>(type: "integer", nullable: false),
+                    EndYear = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
