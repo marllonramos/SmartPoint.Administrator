@@ -183,33 +183,6 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Identity
         }
 
         [HttpPost]
-        [Route("login")]
-        public async Task<IActionResult> Login(UserLoginRequest userLogin)
-        {
-            if (!ModelState.IsValid)
-            {
-                NotifyError(ModelState.Values);
-
-                return CustomResponse();
-            }
-
-            var result = await _signInManager.PasswordSignInAsync(userLogin.Email, userLogin.Password, false, true);
-
-            if (!result.Succeeded)
-            {
-                if (result.IsLockedOut) return CustomResponse(HttpStatusCode.BadRequest, "Usuário bloqueado temporariamente.");
-
-                if (result.IsNotAllowed) return CustomResponse(HttpStatusCode.BadRequest, "Usuário sem permissão.");
-
-                if (result.RequiresTwoFactor) return CustomResponse(HttpStatusCode.BadRequest, "Usuário requer validação duplo fator.");
-
-                return CustomResponse(HttpStatusCode.BadRequest, "Ocorreu um erro na autenticação. Tente novamente mais tarde.");
-            }
-
-            return CustomResponse(HttpStatusCode.OK, await GerarJwt(userLogin.Email));
-        }
-
-        [HttpPost]
         [Route("associate-user-role")]
         public async Task<IActionResult> AssociateUserRole(AssociateUserRole associateUserRole)
         {
@@ -249,6 +222,33 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Identity
             return CustomResponse(HttpStatusCode.OK, $"Associação do usuário {associateUserRole.Username} com a role {associateUserRole.RoleName} realizada com sucesso!");
         }
 
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login(UserLoginRequest userLogin)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyError(ModelState.Values);
+
+                return CustomResponse();
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(userLogin.Email, userLogin.Password, false, true);
+
+            if (!result.Succeeded)
+            {
+                if (result.IsLockedOut) return CustomResponse(HttpStatusCode.BadRequest, "Usuário bloqueado temporariamente.");
+
+                if (result.IsNotAllowed) return CustomResponse(HttpStatusCode.BadRequest, "Usuário sem permissão.");
+
+                if (result.RequiresTwoFactor) return CustomResponse(HttpStatusCode.BadRequest, "Usuário requer validação duplo fator.");
+
+                return CustomResponse(HttpStatusCode.BadRequest, "Ocorreu um erro na autenticação. Tente novamente mais tarde.");
+            }
+
+            return CustomResponse(HttpStatusCode.OK, await GerarJwt(userLogin.Email));
+        }
+
         private async Task<UserResponseLogin> GerarJwt(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -257,6 +257,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Identity
 
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user!.Id));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email!));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.FullName!));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTime.UtcNow.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64));
