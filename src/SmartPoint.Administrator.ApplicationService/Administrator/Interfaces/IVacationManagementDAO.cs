@@ -1,7 +1,9 @@
-﻿namespace SmartPoint.Administrator.ApplicationService.Administrator.Interfaces
+﻿using SmartPoint.Administrator.Domain.Administrator.Enum;
+
+namespace SmartPoint.Administrator.ApplicationService.Administrator.Interfaces
 {
     public interface IVacationManagementDAO
     {
-        Task<IEnumerable<dynamic>?> GetVacationManagementAsync(int startYear, int endYear, Guid? userId);
+        Task<IEnumerable<dynamic>?> GetVacationManagementAsync(int startYear, int endYear, Guid? userId, VacationStatus? vacationStatus);
     }
 }

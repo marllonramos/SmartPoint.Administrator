@@ -4,6 +4,7 @@ using SmartPoint.Administrator.Api.Shared;
 using SmartPoint.Administrator.ApplicationService.Administrator.Interfaces;
 using SmartPoint.Administrator.ApplicationService.Administrator.Requests;
 using SmartPoint.Administrator.ApplicationService.Shared.Interfaces;
+using SmartPoint.Administrator.Domain.Administrator.Enum;
 using System.Net;
 
 namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
@@ -49,9 +50,13 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
 
         [HttpGet]
         [Route("get-vacations-management/start-year/{startYear}/end-year/{endYear}")]
-        public async Task<IActionResult> GetVacationsManagementAsync(int startYear, int endYear, [FromQuery] Guid? userId)
+        public async Task<IActionResult> GetVacationsManagementAsync(int startYear, int endYear, [FromQuery] Guid? userId, [FromQuery] int? vacationStatus)
         {
-            var vacations = await _vacationApplicationService.GetVacationsManagementAsync(startYear, endYear, userId);
+            VacationStatus? status = null;
+
+            if (vacationStatus != null) status = (VacationStatus)vacationStatus;
+
+            var vacations = await _vacationApplicationService.GetVacationsManagementAsync(startYear, endYear, userId, status);
 
             return CustomResponse(HttpStatusCode.OK, vacations);
         }
@@ -72,12 +77,30 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Administrator
         }
 
         [HttpPut]
-        [Route("cancellation-by-id/{id:Guid}")]
-        public async Task<IActionResult> CancellationVacationAsync(Guid id)
+        [Route("approve-vacation")]
+        public async Task<IActionResult> ApproveVacationAsync(ApproveVacationRequest request)
         {
-            await _vacationApplicationService.CancellateVacationAsync(id);
+            await _vacationApplicationService.ApproveVacationAsync(request.Id);
 
-            return CustomResponse(HttpStatusCode.OK, id);
+            return CustomResponse(HttpStatusCode.OK, request);
+        }
+
+        [HttpPut]
+        [Route("reject-vacation")]
+        public async Task<IActionResult> RejectVacationAsync(RejectVacationRequest request)
+        {
+            await _vacationApplicationService.RejectVacationAsync(request.Id);
+
+            return CustomResponse(HttpStatusCode.OK, request);
+        }
+
+        [HttpPut]
+        [Route("cancel-vacation")]
+        public async Task<IActionResult> CancellationVacationAsync(CancelVacationRequest request)
+        {
+            await _vacationApplicationService.CancelVacationAsync(request.Id);
+
+            return CustomResponse(HttpStatusCode.OK, request);
         }
 
         [HttpPut]

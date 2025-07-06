@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartPoint.Administrator.ApplicationService.Administrator.Interfaces;
+using SmartPoint.Administrator.Domain.Administrator.Enum;
 using SmartPoint.Administrator.Infra.Administrator.Context;
 using SmartPoint.Administrator.Infra.Identity.Context;
 
@@ -16,7 +17,7 @@ namespace SmartPoint.Administrator.Infra.Administrator.DAO
             _identityContext = identityContext;
         }
 
-        public async Task<IEnumerable<dynamic>?> GetVacationManagementAsync(int startYear, int endYear, Guid? userId)
+        public async Task<IEnumerable<dynamic>?> GetVacationManagementAsync(int startYear, int endYear, Guid? userId, VacationStatus? vacationStatus)
         {
             try
             {
@@ -25,6 +26,8 @@ namespace SmartPoint.Administrator.Infra.Administrator.DAO
                                                           );
 
                 if (userId != null) queryVacations = queryVacations.Where(p => p.UserId == userId);
+
+                if (vacationStatus != null) queryVacations = queryVacations.Where(p => p.Status == vacationStatus);
 
                 var vacations = await queryVacations.AsNoTracking()
                                               .OrderByDescending(o => o.StartPeriod)

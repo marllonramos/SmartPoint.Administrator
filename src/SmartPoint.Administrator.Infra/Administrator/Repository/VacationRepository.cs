@@ -32,8 +32,6 @@ namespace SmartPoint.Administrator.Infra.Administrator.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task CancellateVacationAsync() => await _context.SaveChangesAsync();
-
         public async Task UpdateAsync() => await _context.SaveChangesAsync();
 
         public async Task DeleteAsync(Vacation vacation)

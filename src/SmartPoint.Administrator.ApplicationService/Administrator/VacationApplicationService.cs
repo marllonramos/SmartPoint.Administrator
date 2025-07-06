@@ -4,6 +4,7 @@ using SmartPoint.Administrator.ApplicationService.Shared.Interfaces;
 using SmartPoint.Administrator.ApplicationService.Shared.Notifications;
 using SmartPoint.Administrator.Domain.Administrator.Aggregate;
 using SmartPoint.Administrator.Domain.Administrator.Builder;
+using SmartPoint.Administrator.Domain.Administrator.Enum;
 using SmartPoint.Administrator.Domain.Administrator.Repository;
 using System.Net;
 
@@ -64,9 +65,9 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
             return vacations;
         }
 
-        public async Task<IEnumerable<dynamic>?> GetVacationsManagementAsync(int startYear, int endYear, Guid? userId)
+        public async Task<IEnumerable<dynamic>?> GetVacationsManagementAsync(int startYear, int endYear, Guid? userId, VacationStatus? vacationStatus)
         {
-            var vacations = await _vacationDAO.GetVacationManagementAsync(startYear, endYear, userId);
+            var vacations = await _vacationDAO.GetVacationManagementAsync(startYear, endYear, userId, vacationStatus);
 
             if (vacations == null)
             {
@@ -91,15 +92,37 @@ namespace SmartPoint.Administrator.ApplicationService.Administrator
             await _vacationRepository.CreateAsync(vacation);
         }
 
-        public async Task CancellateVacationAsync(Guid id)
+        public async Task ApproveVacationAsync(Guid id)
         {
             var vacation = await GetVacationByIdAsync(id);
 
             if (vacation == null) return;
 
-            vacation?.Cancel();
+            vacation.Approve();
 
-            await _vacationRepository.CancellateVacationAsync();
+            await _vacationRepository.UpdateAsync();
+        }
+
+        public async Task RejectVacationAsync(Guid id)
+        {
+            var vacation = await GetVacationByIdAsync(id);
+
+            if (vacation == null) return;
+
+            vacation.Reject();
+
+            await _vacationRepository.UpdateAsync();
+        }
+
+        public async Task CancelVacationAsync(Guid id)
+        {
+            var vacation = await GetVacationByIdAsync(id);
+
+            if (vacation == null) return;
+
+            vacation.Cancel();
+
+            await _vacationRepository.UpdateAsync();
         }
 
         public async Task UpdateAsync(UpdateVacationRequest request)

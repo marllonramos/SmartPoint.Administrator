@@ -301,6 +301,7 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Identity
                 {
                     Id = user.Id,
                     Email = user.Email!,
+                    FullName = user.FullName,
                     Claims = claims.Select(c => new UserClaim
                     {
                         Type = c.Type,
