@@ -78,7 +78,8 @@ namespace SmartPoint.Administrator.Infra.Administrator.DAO
                                      {
                                          Point = point,
                                          user.UserName,
-                                         user.Email
+                                         user.Email,
+                                         user.FullName
                                      })
                                     .ToList();
 

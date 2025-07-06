@@ -49,7 +49,8 @@ namespace SmartPoint.Administrator.Infra.Administrator.DAO
                                          {
                                              Vacation = vacation,
                                              user.UserName,
-                                             user.Email
+                                             user.Email,
+                                             user.FullName
                                          })
                                         .ToList();
 
