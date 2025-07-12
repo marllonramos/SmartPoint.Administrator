@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ExternalServices\Payments\MercadoPago\" />
     <Folder Include="Identity\Repository\" />
   </ItemGroup>
 
