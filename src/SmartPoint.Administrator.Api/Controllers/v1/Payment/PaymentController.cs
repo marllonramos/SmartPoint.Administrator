@@ -32,9 +32,9 @@ namespace SmartPoint.Administrator.Api.Controllers.v1.Payment
                 return CustomResponse();
             }
 
-            await _paymentApplicationService.Checkout(request);
+            var result = await _paymentApplicationService.CheckoutAsync(request);
 
-            return CustomResponse(HttpStatusCode.Created, request);
+            return CustomResponse(HttpStatusCode.Created, result);
         }
     }
 }
