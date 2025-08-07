@@ -35,7 +35,7 @@
 - [Visual Studio Community 2022+](https://visualstudio.microsoft.com/pt-br/downloads/)
 - [Git](https://git-scm.com/downloads)
 - [PostgreSQL](https://www.postgresql.org/download/)
-- [DBeaver para acesso ao PostgreSQL](https://dbeaver.io/)
+- [DBeaver](https://dbeaver.io/)
 
 ### Versão do DotNet
 
